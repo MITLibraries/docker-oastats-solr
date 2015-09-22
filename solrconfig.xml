@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <luceneMatchVersion>5.3.0</luceneMatchVersion>
+  <dataDir>${solr.data.dir:}</dataDir>
+  <directoryFactory name="DirectoryFactory" class="${solr.directoryFactory:solr.NRTCachingDirectoryFactory}">
+    <!-- These will be used if you are using the solr.HdfsDirectoryFactory,
+         otherwise they will be ignored. If you don't plan on using hdfs,
+         you can safely remove this section. -->
+    <!-- The root directory that collection data should be written to. -->
+    <str name="solr.hdfs.home">${solr.hdfs.home:}</str>
+    <!-- The hadoop configuration files to use for the hdfs client. -->
+    <str name="solr.hdfs.confdir">${solr.hdfs.confdir:}</str>
+    <!-- Enable/Disable the hdfs cache. -->
+    <str name="solr.hdfs.blockcache.enabled">${solr.hdfs.blockcache.enabled:true}</str>
+    <!-- Enable/Disable using one global cache for all SolrCores.
+         The settings used will be from the first HdfsDirectoryFactory created. -->
+    <str name="solr.hdfs.blockcache.global">${solr.hdfs.blockcache.global:true}</str>
+  </directoryFactory>
+  <codecFactory class="solr.SchemaCodecFactory"/>
+  <schemaFactory class="ClassicIndexSchemaFactory"/>
+  <indexConfig>
+    <lockType>${solr.lock.type:native}</lockType>
+    <infoStream>true</infoStream>
+  </indexConfig>
+  <jmx/>
+  <updateHandler class="solr.DirectUpdateHandler2">
+    <updateLog>
+      <str name="dir">${solr.ulog.dir:}</str>
+    </updateLog>
+    <autoCommit>
+      <maxTime>${solr.autoCommit.maxTime:15000}</maxTime>
+      <openSearcher>false</openSearcher>
+    </autoCommit>
+    <autoSoftCommit>
+      <maxTime>${solr.autoSoftCommit.maxTime:-1}</maxTime>
+    </autoSoftCommit>
+  </updateHandler>
+  <query>
+    <maxBooleanClauses>1024</maxBooleanClauses>
+    <filterCache class="solr.FastLRUCache" size="512" initialSize="512" autowarmCount="0"/>
+    <queryResultCache class="solr.LRUCache" size="512" initialSize="512" autowarmCount="0"/>
+    <documentCache class="solr.LRUCache" size="512" initialSize="512" autowarmCount="0"/>
+    <cache name="perSegFilter" class="solr.search.LRUCache" size="10" initialSize="0" autowarmCount="10" regenerator="solr.NoOpRegenerator"/>
+    <enableLazyFieldLoading>true</enableLazyFieldLoading>
+    <queryResultWindowSize>20</queryResultWindowSize>
+    <queryResultMaxDocsCached>200</queryResultMaxDocsCached>
+    <listener event="newSearcher" class="solr.QuerySenderListener">
+      <arr name="queries">
+        <str name="q">*:*</str>
+      </arr>
+    </listener>
+    <listener event="firstSearcher" class="solr.QuerySenderListener">
+      <arr name="queries">
+        <lst>
+          <str name="q">*:*</str>
+        </lst>
+      </arr>
+    </listener>
+    <useColdSearcher>false</useColdSearcher>
+    <maxWarmingSearchers>2</maxWarmingSearchers>
+  </query>
+  <requestDispatcher handleSelect="false">
+    <requestParsers enableRemoteStreaming="true" multipartUploadLimitInKB="2048000" formdataUploadLimitInKB="2048" addHttpRequestToContext="false"/>
+    <httpCaching never304="true"/>
+  </requestDispatcher>
+  <requestHandler name="/select" class="solr.SearchHandler">
+    <lst name="defaults">
+      <int name="rows">10</int>
+    </lst>
+  </requestHandler>
+  <requestHandler name="/update" class="solr.UpdateRequestHandler"/>
+  <requestHandler name="/admin/" class="solr.admin.AdminHandlers"/>
+  <admin>
+    <defaultQuery>*:*</defaultQuery>
+  </admin>
+</config>

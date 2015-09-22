@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<schema>
+    <fields>
+        <field name="handle" type="string" indexed="true" stored="true"
+            multiValued="false" />
+        <field name="title" type="string" indexed="true" stored="true"
+            multiValued="false" />
+        <field name="country" type="string" indexed="true" stored="true"
+            multiValued="false" />
+        <field name="time" type="tdate" indexed="true" stored="true"
+            multiValued="false" />
+        <field name="dlc_display" type="string" indexed="true" stored="true"
+            multiValued="true" />
+        <field name="dlc_canonical" type="string" indexed="true" stored="true"
+            multiValued="true" />
+        <field name="author_id" type="string" indexed="true" stored="true"
+            multiValued="true" />
+        <field name="author_name" type="string" indexed="true" stored="true"
+            multiValued="true" />
+        <field name="author" type="string" indexed="true" stored="true"
+            multiValued="true" />
+        <field name="_version_" type="long" indexed="true" stored="true"
+            multiValued="false" />
+    </fields>
+    <types>
+        <fieldType name="string" class="solr.StrField" />
+        <fieldType name="long" class="solr.TrieLongField" precisionStep="0"
+            positionIncrementGap="0" />
+        <fieldType name="tdate" class="solr.TrieDateField" precisionStep="8" />
+    </types>
+</schema>
